@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+
 import BalanceInfo from "./Components/BalanceInfo"
 import Button from "./Components/Button"
 import RechargeInput from "./Components/RechargeInput"
@@ -17,22 +19,34 @@ export default function Main(){
 }
 
 function Top(){
+    let navigate = useNavigate();
 
-    const [showApi,setShowAPi] = useState(false);
 
     const name = "Akash Raj"
     const api_key = "234gdfhgfgh768@#g5645"
 
-    const handleClick = () =>{
+    const handleAPI = () =>{
        navigator.clipboard.writeText(api_key)
        alert("api key copied to clipboard")
+    }
+
+    const handleLogOut = ()=>{
+        navigate("/")
+        console.log("Logging out!");
     }
 
     return(
         <div style={styles.top}>
             <h3 style={{textDecoration:"underline"}}>Welcome, {name}</h3>
-            <div>
-                <Button title="API Key" handleClick={handleClick}/>
+            <div
+                style={{
+                    display:"flex",
+                    flexDirection:"row",
+                }}
+            >
+                <Button title="API Key" handleClick={handleAPI}/>
+                <h3 style={{paddingRight:10}}></h3>
+                <Button title="Log Out" handleClick={handleLogOut}/>
             </div>
         </div>
     )
@@ -69,7 +83,7 @@ function Recharge(){
                     marginTop:30,
                 }}
             >
-                <Button title="recharge"/>
+                <Button title="Recharge"/>
             </div>
         </div>
     )

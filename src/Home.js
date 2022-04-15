@@ -1,4 +1,6 @@
 import { useState} from "react"
+import { useNavigate } from "react-router-dom";
+
 import Button from "./Components/Button";
 import InputField from "./Components/InputField";
 
@@ -29,6 +31,7 @@ function Info(){
 
 
 function InputForm(){
+    let navigate = useNavigate();
 
     const [status,setStatus] = useState("acc_creation");
     const [credentials,setCredentials] = useState({"username":"","email":"","password":""})
@@ -43,9 +46,11 @@ function InputForm(){
         if(status==="acc_creation"){
             console.log("Handling Registration")
             console.log(credentials)
+            navigate("Main");
         }else{    
             console.log("Handling Login")
             console.log(credentials);
+            navigate("Main");
         }
     }
     
