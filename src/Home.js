@@ -1,4 +1,6 @@
 import { useState} from "react"
+import { useNavigate } from "react-router-dom";
+
 import Button from "./Components/Button";
 import InputField from "./Components/InputField";
 
@@ -29,6 +31,7 @@ function Info(){
 
 
 function InputForm(){
+    let navigate = useNavigate();
 
     const [status,setStatus] = useState("acc_creation");
     const [credentials,setCredentials] = useState({"username":"","email":"","password":""})
@@ -40,12 +43,70 @@ function InputForm(){
     }
     const handleSubmission = (e)=>{
         e.preventDefault();
-        if(status==="acc_creation"){
-            console.log("Handling Registration")
-            console.log(credentials)
+        if(status==="login"){
+            console.log("Handling login")
+
+            var myHeaders = new Headers();
+
+            var formdata = new FormData();
+            formdata.append("username", credentials.username);
+            formdata.append("password", credentials.password);
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: formdata,
+                redirect: 'follow'
+            };
+
+            fetch("http://127.0.0.1:8002/auth/login/", requestOptions)
+            .then((response) => {
+                if(response.ok){
+                    return response.json()
+                }
+            })
+            .then((result) => {
+                if(result){
+                    console.log(result);
+                    localStorage.setItem('user_id',result.user_id);
+                    
+                    navigate("Main",{state:result});
+                    
+                }
+            })
+            .catch(error => console.log('error', error));
         }else{    
-            console.log("Handling Login")
-            console.log(credentials);
+            console.log("Handling Registration")
+            var myHeaders = new Headers();
+
+            var formdata = new FormData();
+            formdata.append("username", credentials.username);
+            formdata.append("password", credentials.password);
+            formdata.append("email", credentials.email);
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: formdata,
+                redirect: 'follow'
+            };
+
+            fetch("http://127.0.0.1:8002/auth/register/", requestOptions)
+            .then((response) => {
+                if(response.ok){
+                    return response.json()
+                }
+            })
+            .then((result) => {
+                if(result){
+                    console.log(result);
+                    localStorage.setItem('user_id',result.user_id);
+                    
+                    navigate("Main",{state:result});
+                    
+                }
+            })
+            .catch(error => console.log('error', error));
         }
     }
     
