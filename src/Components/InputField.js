@@ -7,13 +7,24 @@ export default function InputField(props){
     return(
         <div style={styles.inputContainer}>
             <h3 style={styles.placeholder}>{props.placeholder}</h3>
-            <input 
-                type={props.type} 
-                name={props.name} 
-                value={props.value} 
-                onChange={props.handleChange}
-                style={styles.input}
-            />
+            {props.type=="number"?
+                <input 
+                    type={props.type} 
+                    name={props.name} 
+                    value={props.value} 
+                    onChange={props.handleChange}
+                    style={styles.input}
+                    min="0"
+                />
+                :<input 
+                    type={props.type} 
+                    name={props.name} 
+                    value={props.value} 
+                    onChange={props.handleChange}
+                    style={styles.input}
+
+                />
+            }
         </div>
     )
 }

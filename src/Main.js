@@ -1,29 +1,60 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useNavigate,useLocation } from "react-router-dom"
 
 import BalanceInfo from "./Components/BalanceInfo"
 import Button from "./Components/Button"
 import RechargeInput from "./Components/RechargeInput"
 
 export default function Main(){
+    const location = useLocation();
+    const [load,setLoad] = useState(false);
+    const [calls,setCalls] = useState({"level1":50,"level2":50,"level3":50})
+    
+    useEffect(()=>{
+        //get balance
+        var myHeaders = new Headers();
+            
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(`http://127.0.0.1:8002/recharge/getbalance/${location.state.username}`, requestOptions)
+        .then((response) => {
+            if(response.ok){
+                return response.json()
+            }
+        })
+        .then((result) => {
+            if(result){
+                console.log(result);
+                setCalls(result)             
+            }
+        })
+        .catch(error => console.log('error', error));
+        console.log("call reset done")
+    },[load])
+
+
     return(
         <div style={{
             width:"70%",
             margin:"auto"
         }}>
-            <Top/>
-            <Balance/>
-            <Recharge/>
+            <Top username={location.state.username} apiKey={location.state.api_key}/>
+            <Balance balance={calls}/>
+            <Recharge username={location.state.username} load={load} setLoad={setLoad}/>
         </div>
     )
 }
 
-function Top(){
+function Top(props){
     let navigate = useNavigate();
 
 
-    const name = "Akash Raj"
-    const api_key = "234gdfhgfgh768@#g5645"
+    const name = props.username
+    const api_key = props.apiKey
 
     const handleAPI = () =>{
        navigator.clipboard.writeText(api_key)
@@ -31,6 +62,7 @@ function Top(){
     }
 
     const handleLogOut = ()=>{
+        localStorage.removeItem("user_id");
         navigate("/")
         console.log("Logging out!");
     }
@@ -53,27 +85,88 @@ function Top(){
 }
 
 
-function Balance(){
+function Balance(props){
+    
     return(
         <div>
             <h2>Your Balance</h2>
             <div style={styles.BalanceContainer}>
-                <BalanceInfo level={1} calls={100}/>
-                <BalanceInfo level={2} calls={150}/>
-                <BalanceInfo level={3} calls={270}/>
+                <BalanceInfo level={1} calls={props.balance.level1}/>
+                <BalanceInfo level={2} calls={props.balance.level2}/>
+                <BalanceInfo level={3} calls={props.balance.level3}/>
             </div>
         </div>
     )
 }
 
-function Recharge(){
+function Recharge(props){
+    const [totalAmt,setTotalAmt] = useState({"level1":0,"level2":0,"level3":0});
+    const [totalCalls,setTotalCalls] = useState({"level1":0,"level2":0,"level3":0});
+    const [recharge,setRecharge] = useState("Recharge $0");
+
+
+    const handleTotalAmt = (amt) =>{
+        setTotalAmt({...totalAmt,[amt.level]:amt.value});
+    }
+
+    const handleTotalCalls = (call) =>{
+        setTotalCalls({...totalCalls,[call.level]:call.value});
+    }
+
+    useEffect(()=>{
+        var total = Object.values(totalAmt);
+        var sum = 0;
+        for(var i=0;i<total.length;i++){
+            sum += total[i];
+        }
+        setRecharge("Recharge $"+sum.toFixed(3));
+    },[totalAmt])
+
+    const hadnleRecharge = () =>{
+        console.log("recharging...")
+        var myHeaders = new Headers();
+
+        var formdata = new FormData();
+        formdata.append("username", props.username);
+        formdata.append("level1",totalCalls.level1);
+        formdata.append("level2",totalCalls.level2);
+        formdata.append("level3",totalCalls.level3);
+        
+        console.log("calls")
+        console.log(totalCalls)
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        fetch("http://127.0.0.1:8002/recharge/", requestOptions)
+        .then((response) => {
+            if(response.ok){
+                return response.json()
+            }
+        })
+        .then((result) => {
+            if(result){
+                console.log(result);
+                console.log("updating...")
+                props.setLoad(!props.load);
+                                        
+            }
+        })
+        .catch(error => console.log('error', error));
+
+        //reload balance
+    }
+
     return(
         <div style={{marginTop:50}}>
             <h2>Recharge</h2>
             <div style={styles.BalanceContainer}>
-                <RechargeInput level={1}/>
-                <RechargeInput level={2}/>
-                <RechargeInput level={3}/>
+                <RechargeInput level={1} handleTotalAmt={handleTotalAmt} handleTotalCalls={handleTotalCalls}/>
+                <RechargeInput level={2} handleTotalAmt={handleTotalAmt} handleTotalCalls={handleTotalCalls}/>
+                <RechargeInput level={3} handleTotalAmt={handleTotalAmt} handleTotalCalls={handleTotalCalls}/>
             </div>
             <div
                 style={{
@@ -83,7 +176,7 @@ function Recharge(){
                     marginTop:30,
                 }}
             >
-                <Button title="Recharge"/>
+                <Button title={recharge} handleClick={hadnleRecharge}/>
             </div>
         </div>
     )
