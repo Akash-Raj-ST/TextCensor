@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import Button from "./Components/Button";
 import InputField from "./Components/InputField";
 
+import { url } from "./url";
+
 export default function Home(){
     return(
         <div 
@@ -58,7 +60,7 @@ function InputForm(){
                 redirect: 'follow'
             };
 
-            fetch("http://127.0.0.1:8002/auth/login/", requestOptions)
+            fetch(url+"/auth/login/", requestOptions)
             .then((response) => {
                 if(response.ok){
                     return response.json()
@@ -90,7 +92,7 @@ function InputForm(){
                 redirect: 'follow'
             };
 
-            fetch("http://127.0.0.1:8002/auth/register/", requestOptions)
+            fetch(url+"/auth/register/", requestOptions)
             .then((response) => {
                 if(response.ok){
                     return response.json()

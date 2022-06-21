@@ -1,0 +1,1 @@
+export const url = "https://text-censor.herokuapp.com";

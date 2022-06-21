@@ -4,6 +4,7 @@ import { useNavigate,useLocation } from "react-router-dom"
 import BalanceInfo from "./Components/BalanceInfo"
 import Button from "./Components/Button"
 import RechargeInput from "./Components/RechargeInput"
+import { url } from "./url"
 
 export default function Main(){
     const location = useLocation();
@@ -20,7 +21,7 @@ export default function Main(){
             redirect: 'follow'
         };
 
-        fetch(`http://127.0.0.1:8002/recharge/getbalance/${location.state.username}`, requestOptions)
+        fetch(`${url}/recharge/getbalance/${location.state.username}`, requestOptions)
         .then((response) => {
             if(response.ok){
                 return response.json()
@@ -141,7 +142,7 @@ function Recharge(props){
             redirect: 'follow'
         };
 
-        fetch("http://127.0.0.1:8002/recharge/", requestOptions)
+        fetch(url+"/recharge/", requestOptions)
         .then((response) => {
             if(response.ok){
                 return response.json()
