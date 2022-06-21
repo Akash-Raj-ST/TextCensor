@@ -9,7 +9,7 @@ import { url } from "./url"
 export default function Main(){
     const location = useLocation();
     const [load,setLoad] = useState(false);
-    const [calls,setCalls] = useState({"level1":50,"level2":50,"level3":50})
+    const [calls,setCalls] = useState({"level1":0,"level2":0,"level3":0})
     
     useEffect(()=>{
         //get balance
