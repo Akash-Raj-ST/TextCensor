@@ -20,8 +20,7 @@ function Info(){
         <div style={styles.infoContainer}>
             <h1 style={styles.title}>TEXT CENSORSHIP</h1>
             <h4 style={styles.content}>
-                Lorem Ipsum is simply dummy text of the printing
-                and typesetting industry. Lorem Ipsum has been
+                Protecting you from R E A L I T Y. Lorem Ipsum has been
                 the industry's standard dummy text ever since
                 the 1500s,  printing and typesetting industry. 
             </h4>
